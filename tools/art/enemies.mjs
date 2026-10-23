@@ -26,7 +26,7 @@ const SBASE = {
   bob: 0, hipY: -18, lean: 0, headTilt: 0, jaw: 0,
   legB: { thigh: -14, shin: 8, lift: 0 },
   legF: { thigh: 15, shin: -6, lift: 0 },
-  hand: [10, -13.5], swordAngle: 158,
+  hand: [11.8, -7], swordAngle: 132,
   offHand: [-7, -17], offAng: 0,
   ragSway: 0,
 };
@@ -185,31 +185,35 @@ function rustySword(g, hand, angle) {
   const ux = Math.sin(a), uy = -Math.cos(a);
   const px = -uy, py = ux;
   const hx = SFX + hand[0], hy = SFY + hand[1];
-  // leather grip + wraps
-  limb(g, [hx - ux * 2.4, hy - uy * 2.4], [hx - ux * 6, hy - uy * 6], 1.2, 1, PAL.leather, { outline: PAL.leather[0], mid: PAL.leather[2], light: PAL.leather[3], dark: PAL.leather[1] });
-  for (let i = 0; i < 3; i++) put(g, Math.round(hx - ux * (3 + i * 1.1) + px * 0.4), Math.round(hy - uy * (3 + i * 1.1) + py * 0.4), PAL.leather[4]);
+  // guard ahead of the bony fist so the grip reads in the hand
+  const guard = [hx + ux * 3.6, hy + uy * 3.6];
+  const tip = [hx + ux * 24, hy + uy * 24];
+  // leather grip exposed past the claws
+  limb(g, [hx - ux * 1.7, hy - uy * 1.7], [hx - ux * 5.6, hy - uy * 5.6], 1.2, 1, PAL.leather, { outline: PAL.leather[0], mid: PAL.leather[2], light: PAL.leather[3], dark: PAL.leather[1] });
+  limb(g, [hx + ux * 1.9, hy + uy * 1.9], [hx + ux * 3.1, hy + uy * 3.1], 1.1, 1, PAL.leather, { outline: PAL.leather[0] });
+  for (let i = 0; i < 3; i++) put(g, Math.round(hx - ux * (2.7 + i * 1.0) + px * 0.4), Math.round(hy - uy * (2.7 + i * 1.0) + py * 0.4), PAL.leather[4]);
+  put(g, Math.round(hx + ux * 2.2 + px * 0.7), Math.round(hy + uy * 2.2 + py * 0.7), PAL.leather[4]);
   // crossguard with curled quillons
-  limb(g, [hx + px * 5.2, hy + py * 5.2], [hx - px * 5.2, hy - py * 5.2], 1.2, 1.2, RUST, { outline: RUST[0], mid: RUST[2], light: RUST[3], dark: RUST[1] });
-  put(g, Math.round(hx + px * 5.6 + ux), Math.round(hy + py * 5.6 + uy), RUST[3]);
-  put(g, Math.round(hx - px * 5.6 - ux), Math.round(hy - py * 5.6 - uy), RUST[3]);
+  limb(g, [guard[0] + px * 5.2, guard[1] + py * 5.2], [guard[0] - px * 5.2, guard[1] - py * 5.2], 1.2, 1.2, RUST, { outline: RUST[0], mid: RUST[2], light: RUST[3], dark: RUST[1] });
+  put(g, Math.round(guard[0] + px * 5.6 + ux), Math.round(guard[1] + py * 5.6 + uy), RUST[3]);
+  put(g, Math.round(guard[0] - px * 5.6 - ux), Math.round(guard[1] - py * 5.6 - uy), RUST[3]);
   // straight steel blade, slightly tapered
-  const base = [hx + ux * 2, hy + uy * 2];
-  const tip = [hx + ux * 21, hy + uy * 21];
+  const base = [guard[0], guard[1]];
   const pts = [
     [base[0] + px * 2.1, base[1] + py * 2.1],
-    [hx + ux * 15 + px * 1.5, hy + uy * 15 + py * 1.5],
+    [hx + ux * 14.5 + px * 1.5, hy + uy * 14.5 + py * 1.5],
     [tip[0], tip[1]],
-    [hx + ux * 15 - px * 1.4, hy + uy * 15 - py * 1.4],
+    [hx + ux * 14.5 - px * 1.4, hy + uy * 14.5 - py * 1.4],
     [base[0] - px * 2.1, base[1] - py * 2.1],
   ];
   const m = paint(g, pts, IRON, { outline: IRON[0], mid: IRON[2], light: IRON[3], dark: IRON[1] });
   lineMasked(g, m.mask, base[0] + px * 0.9, base[1] + py * 0.9, tip[0] - ux * 3.4 + px * 0.5, tip[1] - uy * 3.4 + py * 0.5, IRON[4]);
   // rust blotches + nicks
-  for (const [d, side] of [[7, 1.2], [11, -1.1], [16, 0.9]]) {
+  for (const [d, side] of [[8, 1.2], [12, -1.1], [18, 0.9]]) {
     put(g, Math.round(hx + ux * d + px * side), Math.round(hy + uy * d + py * side), RUST[2]);
     put(g, Math.round(hx + ux * (d + 1.2) + px * side), Math.round(hy + uy * (d + 1.2) + py * side), RUST[1]);
   }
-  put(g, Math.round(hx + ux * 18 + px * 1.6), Math.round(hy + uy * 18 + py * 1.6), IRON[0]);
+  put(g, Math.round(hx + ux * 20 + px * 1.6), Math.round(hy + uy * 20 + py * 1.6), IRON[0]);
   // pommel
   ring(g, hx - ux * 6.6, hy - uy * 6.6, 1.4, RUST);
 }
@@ -268,21 +272,21 @@ function skeletonWalk(i) {
   return spose({
     legF: { thigh: k.f, shin: k.fs, lift: k.fl }, legB: { thigh: k.b, shin: k.bs, lift: k.bl },
     bob: k.bob, hipY: -18 + k.bob * 0.5, headTilt: k.rag * 1.5, jaw: 0.25,
-    hand: [9.5 + k.rag * 0.8, -13 - k.bob], swordAngle: 158 + k.rag * 2,
+    hand: [11.2 + k.rag * 0.5, -7 - k.bob], swordAngle: 132 + k.rag * 2,
     ragSway: k.rag * 1.6,
   });
 }
 const SATTACK = [
-  [0, spose({ hand: [10, -13.5], swordAngle: 158, jaw: 0.2 })],
+  [0, spose({ hand: [11.8, -7], swordAngle: 132, jaw: 0.2 })],
   [0.35, spose({ hand: [1, -31], swordAngle: -58, lean: -1, headTilt: -2, jaw: 0.8, legF: { thigh: 20, shin: -4 }, legB: { thigh: -18, shin: 8 }, ragSway: 2 })],
   [0.55, spose({ hand: [14, -21], swordAngle: 96, lean: 1.5, headTilt: 2, jaw: 1, legF: { thigh: 28, shin: -12 }, legB: { thigh: -24, shin: 14 }, ragSway: -2 })],
-  [0.72, spose({ hand: [12, -11], swordAngle: 154, lean: 1, headTilt: 1, jaw: 0.6, legF: { thigh: 24, shin: -10 }, legB: { thigh: -20, shin: 12 }, ragSway: -1.5 })],
-  [1, spose({ hand: [10, -13.5], swordAngle: 158, jaw: 0.2 })],
+  [0.72, spose({ hand: [12, -9], swordAngle: 142, lean: 1, headTilt: 1, jaw: 0.6, legF: { thigh: 24, shin: -10 }, legB: { thigh: -20, shin: 12 }, ragSway: -1.5 })],
+  [1, spose({ hand: [11.8, -7], swordAngle: 132, jaw: 0.2 })],
 ];
 const SHURT = [
   [0, spose()],
   [0.35, spose({ hand: [6, -16], swordAngle: 168, lean: -3, headTilt: -4, jaw: 1, bob: 1, ragSway: 3 })],
-  [1, spose({ hand: [9, -13.5], swordAngle: 160, jaw: 0.4 })],
+  [1, spose({ hand: [11.4, -7.4], swordAngle: 134, jaw: 0.4 })],
 ];
 
 function skeletonPile(g) {

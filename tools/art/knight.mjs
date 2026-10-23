@@ -214,18 +214,22 @@ function drawSword(g, p) {
   const ux = Math.sin(a), uy = -Math.cos(a);
   const px = -uy, py = ux;
   const hx = FX + hand[0], hy = FY + hand[1];
-  const guard = [hx + ux * 1.5, hy + uy * 1.5];
-  const tip = [hx + ux * 22, hy + uy * 22];
-  // grip
-  const gripA = [hx - ux * 2, hy - uy * 2];
-  const gripB = [hx - ux * 6, hy - uy * 6];
-  limb(g, gripA, gripB, 1.3, 1.2, L, { outline: L[0] });
+  // guard ahead of the fist so the hand reads as gripping the grip, not the guard
+  const guard = [hx + ux * 4.4, hy + uy * 4.4];
+  const tip = [hx + ux * 25, hy + uy * 25];
+  const pommel = [hx - ux * 6.6, hy - uy * 6.6];
+  // grip exposed on either side of the glove
+  limb(g, [hx - ux * 1.9, hy - uy * 1.9], [hx - ux * 5.6, hy - uy * 5.6], 1.35, 1.2, L, { outline: L[0] });
+  limb(g, [hx + ux * 2.2, hy + uy * 2.2], [hx + ux * 3.9, hy + uy * 3.9], 1.2, 1.1, L, { outline: L[0] });
   for (let i = 0; i < 3; i++) {
-    const t = i / 3;
-    put(g, Math.round(lerp(gripA[0], gripB[0], t)), Math.round(lerp(gripA[1], gripB[1], t)), L[4]);
+    const d = 3.1 + i * 0.9;
+    put(g, Math.round(hx - ux * d), Math.round(hy - uy * d), L[4]);
   }
+  // knuckle wraps closing over the front of the grip
+  put(g, Math.round(hx + ux * 2.6 + px * 0.9), Math.round(hy + uy * 2.6 + py * 0.9), L[3]);
+  put(g, Math.round(hx + ux * 3.4 - px * 0.7), Math.round(hy + uy * 3.4 - py * 0.7), L[4]);
   // pommel
-  paint(g, ellipsePts(gripB[0], gripB[1], 1.7, 1.7, 8), G, { outline: G[0], mid: G[2], light: G[3], dark: G[1] });
+  paint(g, ellipsePts(pommel[0], pommel[1], 1.7, 1.7, 8), G, { outline: G[0], mid: G[2], light: G[3], dark: G[1] });
   // crossguard (perpendicular)
   const cw = 6.2;
   const g1 = [guard[0] + px * cw, guard[1] + py * cw];
@@ -637,8 +641,8 @@ function idle(i, n) {
     capeSway: 1 + Math.sin(t - 0.7) * 1.1,
     plumeSway: Math.sin(t - 0.5) * 1.4,
     plumeLift: Math.sin(t) * 0.5,
-    hand: [13.5 + Math.sin(t) * 0.4, -22.5 - Math.sin(t) * 0.4],
-    swordAngle: 148 + Math.sin(t) * 1.2,
+    hand: [13.8 + Math.sin(t) * 0.4, -22.8 - Math.sin(t) * 0.4],
+    swordAngle: 138 + Math.sin(t) * 1.2,
     shield: [-3, -23.5 + Math.sin(t + 0.4) * 0.3],
   });
 }
@@ -672,7 +676,7 @@ function walk(i, n = 12) {
     lean: 0.9 + Math.cos(t) * 0.5,
     headTilt: k.ht,
     hand: [13.8 + Math.sin(t) * 1.8, -23 + k.bob - (k.f < 0 ? 0.8 : 0)],
-    swordAngle: 150 + Math.sin(t + 0.3) * 5,
+    swordAngle: 136 + Math.sin(t + 0.3) * 5,
     shield: [-2.8 + Math.sin(t) * 0.7, -24 + Math.cos(t) * 0.9],
     shieldArm: [-4, -32 + k.bob * 0.6],
     capeSway: 3 + Math.sin(t - 0.8) * 2.6,
@@ -699,11 +703,11 @@ const A1 = [
     legFront: { thigh: 27, shin: -15 }, legBack: { thigh: -22, shin: 12 },
     bob: 1, headTilt: 0.5, capeSway: -3.5, capeLift: 1, plumeSway: -2.5,
   })],
-  [0.86, pose({ hand: [13.3, -21.5], swordAngle: 148, lean: 0.5, capeSway: 0.5, plumeSway: 1 })],
-  [1, pose({ hand: [13.5, -22.5], swordAngle: 148, capeSway: 1 })],
+  [0.86, pose({ hand: [13.7, -22.2], swordAngle: 140, lean: 0.5, capeSway: 0.5, plumeSway: 1 })],
+  [1, pose({ hand: [13.8, -22.8], swordAngle: 138, capeSway: 1 })],
 ];
 const A2 = [
-  [0, pose({ hand: [13.5, -22.5], swordAngle: 150 })],
+  [0, pose({ hand: [13.8, -22.8], swordAngle: 138 })],
   [0.3, pose({
     hand: [12, -14], swordAngle: 205, lean: 1.5, hip: [1, -18],
     legFront: { thigh: 24, shin: -8 }, legBack: { thigh: -18, shin: 10 },
@@ -720,10 +724,10 @@ const A2 = [
     bob: -1.5, headTilt: -1, capeSway: 2.5, capeLift: 3, plumeSway: 4,
   })],
   [0.84, pose({ hand: [12, -29], swordAngle: 20, capeSway: 2, plumeSway: 2 })],
-  [1, pose({ hand: [13.5, -22.5], swordAngle: 148 })],
+  [1, pose({ hand: [13.8, -22.8], swordAngle: 138 })],
 ];
 const A3 = [
-  [0, pose({ hand: [13.5, -22.5], swordAngle: 145 })],
+  [0, pose({ hand: [13.8, -22.8], swordAngle: 138 })],
   [0.35, pose({
     hand: [-1, -46], swordAngle: -34, lean: -2, hip: [-1.5, -17.5],
     legFront: { thigh: 18, shin: -15 }, legBack: { thigh: -24, shin: 18 },
@@ -745,10 +749,10 @@ const A3 = [
     bob: 1.5, headTilt: 1.5, capeSway: -2, plumeSway: -2,
   })],
   [0.92, pose({ hand: [13.4, -20.5], swordAngle: 155, lean: 1, capeSway: -0.5, plumeSway: 1 })],
-  [1, pose({ hand: [13.5, -22.5], swordAngle: 148 })],
+  [1, pose({ hand: [13.8, -22.8], swordAngle: 138 })],
 ];
 const DASH = [
-  [0, pose({ hand: [13.5, -22.5], swordAngle: 148 })],
+  [0, pose({ hand: [13.8, -22.8], swordAngle: 138 })],
   [0.22, pose({
     hand: [4, -19], swordAngle: 168, lean: -2, hip: [-2, -20.5],
     legFront: { thigh: -20, shin: 24, lift: 2 }, legBack: { thigh: -34, shin: 30, lift: 3 },
@@ -764,7 +768,7 @@ const DASH = [
     legFront: { thigh: 26, shin: -10, lift: 1 }, legBack: { thigh: -20, shin: 12 },
     bob: 0.5, headTilt: 1, capeSway: 3, capeLift: 2, plumeSway: 3,
   })],
-  [1, pose({ hand: [13.5, -22.5], swordAngle: 148 })],
+  [1, pose({ hand: [13.8, -22.8], swordAngle: 138 })],
 ];
 const HURT = [
   [0, pose({ hand: [13, -23], swordAngle: 130 })],
@@ -785,7 +789,7 @@ const HURT = [
 function fpose(o = {}) {
   const base = {
     bob: 0, lean: 0, headTilt: 0, hip: [0, -19],
-    hand: [11.4, -24], swordAngle: 124,
+    hand: [12.2, -23.6], swordAngle: 120,
     shield: [-8.8, -23.5], shieldAngle: 0, shieldArm: [-4, -32],
     legs: [{ swing: 0, lift: 0, dx: 0 }, { swing: 0, lift: 0, dx: 0 }],
     capeSway: 1.6, capeLift: 0.8, plumeSway: 1.2, plumeLift: 0.6, dust: 0,
@@ -827,7 +831,7 @@ function frontIdle(i, n) {
   const t = (i / n) * PHI, s = Math.sin(t);
   return fpose({
     bob: s * 0.5, lean: s * 0.18, headTilt: s * 0.45, hip: [s * 0.2, -19],
-    hand: [11.4 + s * 0.5, -24 - s * 0.5], swordAngle: 124 + s * 2.2,
+    hand: [12.2 + s * 0.5, -23.6 - s * 0.5], swordAngle: 120 + s * 2.2,
     shield: [-8.8 + s * 0.2, -23.5 - s * 0.3], shieldArm: [-4, -32 + s * 0.2],
     legs: [{ swing: s * 0.1, lift: 0 }, { swing: -s * 0.1, lift: 0 }],
     capeSway: 1.6 + s * 1.1, capeLift: 0.8 + Math.abs(s) * 0.6,
@@ -840,7 +844,7 @@ function frontWalk(i, n) {
   const bob = -Math.abs(c) * 1.7;
   return fpose({
     bob, lean: 0.8 + c * 0.35, headTilt: -s * 0.9, hip: [s * 1.3, -19 + bob],
-    hand: [11.4 - s * 2.2, -24.5 - Math.abs(c) * 1.1], swordAngle: 122 + s * 7,
+    hand: [12.2 - s * 2.2, -23.6 - Math.abs(c) * 1.1], swordAngle: 120 + s * 7,
     shield: [-8.8 + s * 0.7, -23.5 - Math.abs(c) * 1.0], shieldArm: [-4, -32 + bob * 0.5],
     legs: [
       { swing: s * 6.0, lift: Math.max(0, s) * 6.4, dx: s * 0.9 },
@@ -989,7 +993,7 @@ function deathPose(i, view = 0) {
       })],
       [0.55, fpose({
         bob: 8, lean: -5.6, headTilt: -10, hip: [-3, -8.4],
-        hand: [1, -16], swordAngle: 158, shield: [-8.4, -14],
+        hand: [1, -17], swordAngle: 158, shield: [-8.4, -14],
         legs: [{ swing: -2, lift: 0 }, { swing: 2.6, lift: 0 }],
         capeSway: -1, plumeSway: 2,
       })],
@@ -1006,12 +1010,12 @@ function deathPose(i, view = 0) {
       legFront: { thigh: 6, shin: -2 }, legBack: { thigh: -20, shin: 14 }, capeSway: -3, plumeSway: 3,
     })],
     [0.35, pose({
-      hand: [2, -14], swordAngle: 168, lean: -4, headTilt: -6, hip: [-2, -13],
+      hand: [2, -15], swordAngle: 168, lean: -4, headTilt: -6, hip: [-2, -13],
       legFront: { thigh: 20, shin: 75, lift: 0 }, legBack: { thigh: -40, shin: 95, lift: 0 },
       bob: 4, capeSway: -2, plumeSway: 3,
     })],
     [0.55, pose({
-      hand: [1, -16], swordAngle: 158, lean: -6, headTilt: -10, hip: [-3, -9],
+      hand: [1, -17], swordAngle: 158, lean: -6, headTilt: -10, hip: [-3, -9],
       legFront: { thigh: 30, shin: 110 }, legBack: { thigh: -30, shin: 115 },
       bob: 8, capeSway: -1, plumeSway: 2,
     })],

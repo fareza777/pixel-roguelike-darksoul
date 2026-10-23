@@ -22,7 +22,7 @@ const BASE = {
   bob: 0, lean: 0, headTilt: 0, capeSway: 0, capeLift: 0, ember: 1, dust: 0,
   legB: { thigh: -10, shin: 6, lift: 0 },
   legF: { thigh: 12, shin: -5, lift: 0 },
-  hand: [22, 6], swordAngle: 150,
+  hand: [21, -1], swordAngle: 138,
   shieldHand: [-20, 4], shieldAngle: 0,
 };
 function bpose(o = {}) {
@@ -191,20 +191,25 @@ function helm(g, p, hx, hy, headX, headY) {
 
 // hand here is absolute; helper draws sword
 function drawSwordAt(g, hx, hy, ux, uy, px, py, ember) {
-  // grip
-  limb(g, [hx - ux * 4, hy - uy * 4], [hx - ux * 11, hy - uy * 11], 1.8, 1.5, LEATHER, { outline: LEATHER[0], mid: LEATHER[2], light: LEATHER[3], dark: LEATHER[1] });
-  for (let i = 0; i < 4; i++) put(g, Math.round(hx - ux * (5 + i * 1.4) + px * 0.6), Math.round(hy - uy * (5 + i * 1.4) + py * 0.6), LEATHER[4]);
+  // guard sits ahead of the gauntlet so the fist reads on the grip
+  const guard = [hx + ux * 6, hy + uy * 6];
+  // grip exposed outside the fist, front and back
+  limb(g, [hx - ux * 3.4, hy - uy * 3.4], [hx - ux * 9.6, hy - uy * 9.6], 1.8, 1.5, LEATHER, { outline: LEATHER[0], mid: LEATHER[2], light: LEATHER[3], dark: LEATHER[1] });
+  limb(g, [hx + ux * 3.6, hy + uy * 3.6], [hx + ux * 5.2, hy + uy * 5.2], 1.6, 1.4, LEATHER, { outline: LEATHER[0] });
+  for (let i = 0; i < 4; i++) put(g, Math.round(hx - ux * (4.4 + i * 1.4) + px * 0.6), Math.round(hy - uy * (4.4 + i * 1.4) + py * 0.6), LEATHER[4]);
+  put(g, Math.round(hx + ux * 4.1 + px * 1.2), Math.round(hy + uy * 4.1 + py * 1.2), LEATHER[4]);
+  put(g, Math.round(hx + ux * 4.9 - px * 1.0), Math.round(hy + uy * 4.9 - py * 1.0), LEATHER[3]);
   // pommel skull
-  ring(g, hx - ux * 12.5, hy - uy * 12.5, 2.2, PAL.bone, { mid: PAL.bone[3], light: PAL.bone[4] });
-  put(g, Math.round(hx - ux * 12.5 - px), Math.round(hy - uy * 12.5 - py), INK);
-  put(g, Math.round(hx - ux * 12.5 + px), Math.round(hy - uy * 12.5 + py), INK);
+  ring(g, hx - ux * 10.6, hy - uy * 10.6, 2.2, PAL.bone, { mid: PAL.bone[3], light: PAL.bone[4] });
+  put(g, Math.round(hx - ux * 10.6 - px), Math.round(hy - uy * 10.6 - py), INK);
+  put(g, Math.round(hx - ux * 10.6 + px), Math.round(hy - uy * 10.6 + py), INK);
   // crossguard, gold, wide
-  limb(g, [hx + px * 8, hy + py * 8], [hx - px * 8, hy - py * 8], 2, 2, GOLD, { outline: GOLD[0], mid: GOLD[2], light: GOLD[3], dark: GOLD[1] });
+  limb(g, [guard[0] + px * 8, guard[1] + py * 8], [guard[0] - px * 8, guard[1] - py * 8], 2, 2, GOLD, { outline: GOLD[0], mid: GOLD[2], light: GOLD[3], dark: GOLD[1] });
   for (const s of [-1, 1]) {
-    limb(g, [hx + px * s * 8, hy + py * s * 8], [hx + px * s * 11 - ux * 2, hy + py * s * 11 - uy * 2], 1.2, 0.6, GOLD, { outline: GOLD[0], mid: GOLD[3], bevel: false });
+    limb(g, [guard[0] + px * s * 8, guard[1] + py * s * 8], [guard[0] + px * s * 11 - ux * 2, guard[1] + py * s * 11 - uy * 2], 1.2, 0.6, GOLD, { outline: GOLD[0], mid: GOLD[3], bevel: false });
   }
   // broad cleaver blade
-  const base = [hx + ux * 4, hy + uy * 4];
+  const base = [guard[0], guard[1]];
   const tip = [hx + ux * 42, hy + uy * 42];
   const pts = [
     [base[0] + px * 5.2, base[1] + py * 5.2],
@@ -322,7 +327,7 @@ function wardenIdle(i) {
     capeLift: Math.sin(ph + 1) * 1.2,
     headTilt: Math.sin(ph + 0.6) * 1.2,
     ember: 1 + Math.sin(ph * 2) * 0.12,
-    hand: [22 + Math.sin(ph) * 0.4, 6],
+    hand: [21 + Math.sin(ph) * 0.4, -1],
     shieldHand: [-20, 4 + Math.sin(ph + 2) * 0.4],
   });
 }
@@ -342,7 +347,7 @@ function wardenWalk(i) {
     bob: k.bob, lean: 1,
     capeSway: k.sway, capeLift: 1,
     headTilt: k.sway * 0.4,
-    hand: [22 + k.hand, 6], swordAngle: 150 + k.sway * 2,
+    hand: [21 + k.hand, -1], swordAngle: 138 + k.sway * 2,
     shieldHand: [-20 - k.sway * 0.4, 4], shieldAngle: k.sway * -1.5,
     ember: 1.05,
   });
