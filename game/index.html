@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ashen Vow — a hand-drawn roguelike</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' fill='%23050409'/%3E%3Cpath d='M8 1l2 5 5 2-5 2-2 5-2-5-5-2 5-2z' fill='%23e6b455'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="viewport">
+  <div id="stage">
+    <canvas id="game" width="480" height="270"></canvas>
+
+    <div id="hud" class="hud hud-hidden">
+      <div class="hud-top">
+        <div class="vitals">
+          <div id="hearts" class="hearts"></div>
+          <div id="dash" class="dash">
+            <span class="dashlabel">DASH</span>
+            <div class="dashbar"><i id="dashfill"></i></div>
+          </div>
+        </div>
+        <div class="rightcol">
+          <div id="sigils" class="sigils"></div>
+          <div class="soulrow"><span class="soulgem"></span><span id="soulcount">00</span><span class="soullabel">SOULS</span></div>
+          <div id="relics" class="relics"></div>
+        </div>
+      </div>
+
+      <div id="roomcard" class="roomcard">
+        <div class="roomeyebrow">ASHEN VOW</div>
+        <div id="roomname" class="roomname"></div>
+        <div id="roomsub" class="roomsub"></div>
+        <div class="roomrule"></div>
+      </div>
+
+      <div id="bossbar" class="bossbar">
+        <span class="bossname">THE PALE WARDEN</span>
+        <div class="bossbar-track"><i id="bossfill"></i></div>
+      </div>
+
+      <div id="prompt" class="prompt"></div>
+
+      <div id="toast" class="toast">
+        <span id="toasticon" class="toasticon"></span>
+        <div class="toasttext"><b id="toasttitle"></b><span id="toastdesc"></span></div>
+      </div>
+
+      <div id="hint" class="hint"><b>WASD</b> move &middot; <b>J</b> strike &middot; <b>K</b> dash &middot; <b>E</b> touch &middot; <b>I</b> ledger &middot; <b>Esc</b> pause</div>
+      <canvas id="minimap" width="132" height="108" class="minimap"></canvas>
+    </div>
+
+    <div id="title" class="screen title hide">
+      <div class="title-inner">
+        <div class="eyebrow">A HAND-DRAWN PIXEL ROGUELIKE</div>
+        <h1>Ashen Vow</h1>
+        <div class="ornament"><i></i><span>&#9670;</span><i></i></div>
+        <p class="tagline">Three sigils. One knight. A keep that does not forgive.</p>
+        <button class="btn" id="start">Swear the Vow</button>
+        <div class="press">Press <span class="key">Enter</span> or click to begin</div>
+        <div class="controls">
+          <span><b class="key">WASD</b> Move</span>
+          <span><b class="key">J</b> Strike</span>
+          <span><b class="key">K</b> Dash</span>
+          <span><b class="key">I</b> Ledger</span>
+        </div>
+        <div class="credit">Pixel art forged in Pixelorama &middot; procedural rigs, hand-tuned frames</div>
+      </div>
+    </div>
+
+    <div id="pause" class="screen pause hide">
+      <div class="panel">
+        <div class="eyebrow">THE KEEP HOLDS ITS BREATH</div>
+        <h2>The Vow Waits</h2>
+        <div class="ornament small"><i></i><span>&#9670;</span><i></i></div>
+        <div id="pauserelics" class="pauserelics"></div>
+        <div class="pause-actions">
+          <button class="btn" id="resume">Return to the Dark</button>
+          <button class="btn alt" id="pauseLedger">The Ledger</button>
+        </div>
+        <div class="press"><span class="key">Esc</span> resume &middot; <span class="key">I</span> ledger &middot; <span class="key">M</span> mute</div>
+      </div>
+    </div>
+
+    <div id="ledger" class="screen ledger hide">
+      <div class="ledger-panel">
+        <header class="ledger-head">
+          <div class="ledger-title">
+            <div class="eyebrow">THE KNIGHT'S LEDGER</div>
+            <h2>Reliquary</h2>
+          </div>
+          <div class="ledger-tabs">
+            <button class="ledger-tab active" data-tab="relics">Relics <span id="ledgerRelicCount">0 / 7</span></button>
+            <button class="ledger-tab" data-tab="gear">Equipment</button>
+          </div>
+          <button id="ledgerClose" class="ledger-close" aria-label="Close ledger">&#215;</button>
+        </header>
+        <div class="ledger-body">
+          <aside class="ledger-left">
+            <div class="figure-stage">
+              <div class="figure-halo"></div>
+              <div class="ledger-figure"></div>
+              <div class="figure-plinth"></div>
+            </div>
+            <div class="setline"><span>OATHBOUND SET</span><b>5 / 5</b></div>
+            <div id="ledgerSlots" class="ledger-slots"></div>
+          </aside>
+          <section class="ledger-main">
+            <div class="ledger-list">
+              <div id="ledgerRelics" class="ledger-view">
+                <div class="ledger-viewhead"><span>RELIC COLLECTION</span><em id="ledgerRelicNote"></em></div>
+                <div id="ledgerGrid" class="ledger-grid"></div>
+              </div>
+              <div id="ledgerGear" class="ledger-view hide">
+                <div class="ledger-viewhead"><span>EQUIPMENT</span><em>BOUND TO THE VOW</em></div>
+                <div id="ledgerGearList" class="ledger-gear"></div>
+              </div>
+            </div>
+            <div id="ledgerDetail" class="ledger-detail"></div>
+          </section>
+        </div>
+        <footer class="ledger-foot">
+          <div id="ledgerStats" class="ledger-stats"></div>
+          <div class="ledger-keys"><span class="key">I</span> / <span class="key">Tab</span> close</div>
+        </footer>
+      </div>
+    </div>
+
+    <div id="end" class="screen end hide">
+      <div class="end-inner">
+        <div id="endeyebrow" class="eyebrow"></div>
+        <h2 id="endtitle" class="endtitle"></h2>
+        <div class="ornament"><i></i><span>&#9670;</span><i></i></div>
+        <p id="endtext" class="endtext"></p>
+        <div id="endstats" class="endstats"></div>
+        <div id="endprompt" class="endprompt"></div>
+      </div>
+    </div>
+
+    <div id="loading" class="screen loading">
+      <div class="loadmark"></div>
+      <div class="loadtext">KINDLING THE BRAZIERS</div>
+    </div>
+  </div>
+</div>
+<script type="module" src="js/game.mjs"></script>
+</body>
+</html>

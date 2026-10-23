@@ -1,0 +1,21 @@
+# Vendored Pixelorama + MCP toolchain (local art pipeline, not the game)
+tools/pixelorama/
+tools/pixelorama-src/
+tools/Pixelorama-MCP/
+
+# Generated QA captures and previews (regenerate with tools/anim.mjs, tools/visual.mjs)
+art/review/
+art/preview/
+
+# Local runtime logs
+tools/serve.log
+*.log
+
+# OS clutter
+Thumbs.db
+.DS_Store
+desktop.ini
+
+# One-off art patch scripts kept out of the repo
+tools/art/patch2.mjs
+tools/art/patch_knight.mjs
